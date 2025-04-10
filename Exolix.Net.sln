@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7E8B46DD-B1D6-4DED-B384-E93345A6B4F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6A7F9020-A19A-4790-8ABD-B3C403FF2056}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evolix.API", "src\Evolix.API\Evolix.API.csproj", "{100A5FE8-D9FD-4169-9150-91825560759F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evolix.Console", "src\Evolix.Console\Evolix.Console.csproj", "{55976F2E-F133-4BEA-A885-A0BAA2B9F4FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{100A5FE8-D9FD-4169-9150-91825560759F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{100A5FE8-D9FD-4169-9150-91825560759F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{100A5FE8-D9FD-4169-9150-91825560759F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{100A5FE8-D9FD-4169-9150-91825560759F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55976F2E-F133-4BEA-A885-A0BAA2B9F4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55976F2E-F133-4BEA-A885-A0BAA2B9F4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55976F2E-F133-4BEA-A885-A0BAA2B9F4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55976F2E-F133-4BEA-A885-A0BAA2B9F4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{100A5FE8-D9FD-4169-9150-91825560759F} = {7E8B46DD-B1D6-4DED-B384-E93345A6B4F8}
+		{55976F2E-F133-4BEA-A885-A0BAA2B9F4FC} = {7E8B46DD-B1D6-4DED-B384-E93345A6B4F8}
+	EndGlobalSection
+EndGlobal
