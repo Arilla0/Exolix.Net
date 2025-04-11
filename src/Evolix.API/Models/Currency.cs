@@ -4,13 +4,29 @@ namespace Evolix.API.Models
 {
     public class Currency
     {
-        [JsonProperty("code")]
+        /// <summary>
+        /// Currency code
+        /// </summary>
         public string Code { get; set; }
 
-        [JsonProperty("name")]
+        /// <summary>
+        /// Currency name
+        /// </summary>
         public string Name { get; set; }
 
-        [JsonProperty("iconUrl")]
-        public string IconUrl { get; set; }
+        /// <summary>
+        /// Currency icon
+        /// </summary>
+        public string Icon { get; set; }
+
+        /// <summary>
+        /// Currency notes
+        /// </summary>
+        public string Notes { get; set; }
+
+        /// <summary>
+        /// List of currency networks (only when withNetworks=true)
+        /// </summary>
+        public List<CurrencyNetwork> Networks { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Evolix.API.Exceptions;
@@ -11,6 +12,7 @@ namespace Exolix.Api
     public class ExolixClient : IExolixClient
     {
         private readonly HttpClient _httpClient;
+        private string _authorizationToken;
 
         public ExolixClient()
         {
@@ -19,11 +21,21 @@ namespace Exolix.Api
                 BaseAddress = new Uri("https://exolix.com/api/v2/")
             };
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", _authorizationToken);
         }
 
-        public async Task<List<Currency>> GetAvailableCurrenciesAsync()
+        public async Task<List<Currency>> GetAvailableCurrenciesAsync(PaginationFilterRequest request = null)
         {
-            var response = await _httpClient.GetAsync("currencies");
+            //.com/api/v2/currencies
+            var url = $"currencies/";//TODO add params form request
+            var response = await _httpClient.GetAsync(url);
+            return await HandleResponse<List<Currency>>(response);
+        }
+        public async Task<List<Currency>> GetCurrencyNetworksAsync(string currencyCode)
+        {
+            //.com/api/v2/currencies
+            var url = $"currencies/{currencyCode}/networks/";
+            var response = await _httpClient.GetAsync(url);
             return await HandleResponse<List<Currency>>(response);
         }
 
