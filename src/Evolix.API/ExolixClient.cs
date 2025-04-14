@@ -9,69 +9,76 @@ using Newtonsoft.Json;
 
 namespace Exolix.Api
 {
+    public class ExolixConfig
+    {
+        public string AuthorizationToken { get; set; }
+        public string BaseAddress { get; set; } = "https://exolix.com/api/v2/";
+    }
     public class ExolixClient : IExolixClient
     {
         private readonly HttpClient _httpClient;
-        private string _authorizationToken;
+        private readonly ExolixConfig _config;
 
-        public ExolixClient()
+        public ExolixClient(ExolixConfig config)
         {
+            if (config == null)
+            {
+                return;
+            }
+            _config = config;
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://exolix.com/api/v2/")
+                BaseAddress = new Uri(_config.BaseAddress)
             };
             _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            _httpClient.DefaultRequestHeaders.Add("Authorization", _authorizationToken);
+            _httpClient.DefaultRequestHeaders.Add("Authorization", _config.AuthorizationToken);
         }
 
-        public async Task<List<Currency>> GetAvailableCurrenciesAsync(PaginationFilterRequest request = null)
+        public async Task<CurrencyApiResponse> GetAvailableCurrenciesAsync(PaginationFilterRequest request = null)
         {
-            //.com/api/v2/currencies
-            var url = $"currencies/";//TODO add params form request
+            request = request ?? new PaginationFilterRequest();
+            var url = _config.BaseAddress+$"currencies?page={request.Page}&size={request.Size}&withNetworks={request.WithNetworks}";//TODO add params form request
             var response = await _httpClient.GetAsync(url);
-            return await HandleResponse<List<Currency>>(response);
+            return await HandleResponse<CurrencyApiResponse>(response);
         }
-        public async Task<List<Currency>> GetCurrencyNetworksAsync(string currencyCode)
+        public async Task<List<CurrencyNetworkDto>> GetCurrencyNetworksAsync(string currencyCode)
         {
-            //.com/api/v2/currencies
-            var url = $"currencies/{currencyCode}/networks/";
+            //https://exolix.com/api/v2/currencies/{code}/networks
+            var url = _config.BaseAddress+$"currencies/{currencyCode}/networks";
             var response = await _httpClient.GetAsync(url);
-            return await HandleResponse<List<Currency>>(response);
+            return await HandleResponse<List<CurrencyNetworkDto>>(response);
         }
 
         public async Task<ExchangeRate> GetExchangeRateAsync(string fromCurrency, string toCurrency, decimal amount)
         {
-            var endpoint = $"rate?from={fromCurrency}&to={toCurrency}&amount={amount}";
+            var endpoint = _config.BaseAddress+$"rate?from={fromCurrency}&to={toCurrency}&amount={amount}";
             var response = await _httpClient.GetAsync(endpoint);
             return await HandleResponse<ExchangeRate>(response);
         }
 
-        public async Task<CreateTransactionResponse> CreateExchangeTransactionAsync(
-            string fromCurrency,
-            string toCurrency,
-            decimal amount,
-            decimal rate,
-            string refundAddress,
-            string toAddress)
+        public async Task<CreateTransactionResponse> CreateExchangeTransactionAsync(CreateTransactionRequest request = null)
         {
-            var request = new CreateTransactionRequest
-            {
-                FromCurrency = fromCurrency,
-                ToCurrency = toCurrency,
-                Amount = amount,
-                Rate = rate,
-                RefundAddress = refundAddress,
-                ToAddress = toAddress
-            };
-
+            request = request ?? new CreateTransactionRequest();
             var content = new StringContent(JsonConvert.SerializeObject(request));
-            var response = await _httpClient.PostAsync("transactions", content);
+            var response = await _httpClient.PostAsync(_config.BaseAddress+"transactions", content);
             return await HandleResponse<CreateTransactionResponse>(response);
         }
 
-        public async Task<TransactionStatus> GetTransactionStatusAsync(string transactionId)
+        public async Task<TransactionResponse> GetTransactionStatusAsync(string transactionId)
         {
-            var response = await _httpClient.GetAsync($"transactions/{transactionId}");
+            var response = await _httpClient.GetAsync(_config.BaseAddress+$"transactions/{transactionId}");
+            return await HandleResponse<TransactionResponse>(response);
+        }
+
+        /// <summary>
+        /// List of transaction history
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<TransactionStatus> GetTransactionsAsync(TransactionQueryParameters request = null)
+        {
+            request = request ?? new TransactionQueryParameters { };
+            var response = await _httpClient.GetAsync(_config.BaseAddress+$"transactions?page={request.Page}&size={request.Size}");
             return await HandleResponse<TransactionStatus>(response);
         }
 
@@ -84,8 +91,15 @@ namespace Exolix.Api
                 throw new ExolixApiException(
                     $"API request failed with status code {response.StatusCode}: {content}");
             }
-
-            return JsonConvert.DeserializeObject<T>(content);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (Exception e)
+            {
+                var obj = JsonConvert.DeserializeObject<ApiResponse<T>>(content);
+                throw new ExolixApiException(obj?.Error);
+            }
         }
     }
 }

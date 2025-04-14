@@ -5,12 +5,12 @@
         /// <summary>
         /// Current page
         /// </summary>
-        public int? Page { get; set; }
+        public int? Page { get; set; } = 1;
 
         /// <summary>
         /// Size per page
         /// </summary>
-        public int? Size { get; set; }
+        public int? Size { get; set; } = 100;
 
         /// <summary>
         /// Search by currency code or name
@@ -22,6 +22,6 @@
         /// true - show with networks
         /// false - don't show with networks (default)
         /// </summary>
-        public bool? WithNetworks { get; set; } = false;
+        public bool? WithNetworks { get; set; } = true;
     }
 }
